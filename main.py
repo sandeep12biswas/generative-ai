@@ -1,5 +1,6 @@
 from google import genai
 import os
+from openai import OpenAI
 
 
 def load_dotenv_from_file(path: str = ".env") -> bool:
@@ -48,9 +49,19 @@ if not api_key:
 
 # The client gets the API key from the environment variable `GEMINI_API_KEY`.
 # genai.Client reads it from the environment, so we can call it as before.
-client = genai.Client()
-
-response = client.models.generate_content(
-    model="gemini-2.5-flash", contents="Explain how AI works in a few words"
+#client = genai.Client()
+client = OpenAI(
+    api_key=api_key,
+    base_url="https://generativelanguage.googleapis.com/v1beta"
 )
-print(response.text)
+
+# response = client.models.generate_content(
+#     model="gemini-2.5-flash", contents="Explain how AI works in a few words"
+# )
+response = client.chat.completions.create(
+    model="gemini-2.5-flash",
+    messages=[
+        {"role": "user", "content": "Explain how AI works in a few words"}
+    ]
+)
+print(response.choices[0].message.content)
